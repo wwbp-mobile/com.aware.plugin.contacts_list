@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="plugin_contacts"
+    android:title="@string/app_name">
+
+    <CheckBoxPreference
+        android:key="status_plugin_contacts"
+        android:defaultValue="false"
+        android:persistent="true"
+        android:title="Active"
+        android:summary="Activate/deactivate plugin" />
+
+    <EditTextPreference
+        android:key="frequency_plugin_contacts"
+        android:defaultValue=""
+        android:inputType="numberDecimal"
+        android:persistent="true"
+        android:summary="Every 1 day(s)"
+        android:title="Frequency (in days)" />
+
+</PreferenceScreen>
