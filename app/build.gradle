@@ -51,14 +51,14 @@ bintray {
         repo = 'com.awareframework'
         name = android.defaultConfig.applicationId
         licenses = ['Apache-2.0']
-        websiteUrl = 'https://github.com/denzilferreira/aware-plugin-contacts_list' //EDIT ME
-        issueTrackerUrl = 'https://github.com/denzilferreira/aware-plugin-contacts_list/issues' //EDIT ME
+        websiteUrl = 'https://github.com/denzilferreira/com.aware.plugin.contacts_list' //EDIT ME
+        issueTrackerUrl = 'https://github.com/denzilferreira/com.aware.plugin.contacts_list/issues' //EDIT ME
         labels = ['aar','android','framework','aware']
         publicDownloadNumbers = true
-        vcsUrl = 'https://github.com/denzilferreira/aware-plugin-contacts_list.git' //EDIT ME
-        desc = "AWARE Plugin: Template" //EDIT ME
+        vcsUrl = 'https://github.com/denzilferreira/com.aware.plugin.contacts_list.git' //EDIT ME
+        desc = "AWARE Plugin: Contacts List" //EDIT ME
         userOrg = user
-        githubRepo = "denzilferreira/aware-plugin-contacts_list" //EDIT ME
+        githubRepo = "denzilferreira/com.aware.plugin.contacts_list" //EDIT ME
 
         version {
             name = "$version_readable"
