@@ -80,22 +80,22 @@ public class Contacts_Service extends IntentService {
                 if (email != null && !email.isClosed()) email.close();
 
                 JSONArray groups = new JSONArray();
-                Cursor group = getContentResolver().query(
-                        ContactsContract.Data.CONTENT_URI, null,
-                        ContactsContract.Data.CONTACT_ID + "=" + contact_id + " AND " + ContactsContract.Data.MIMETYPE + "=" + ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE,
-                        null, null);
-                if (group != null && group.moveToFirst()) {
-                    do {
-                        try {
-                            JSONObject groupRow = new JSONObject();
-                            groupRow.put("group", group.getString(group.getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID)));
-                            groups.put(groupRow);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    } while (group.moveToNext());
-                }
-                if (group != null && ! group.isClosed()) group.close();
+//                Cursor group = getContentResolver().query(
+//                        ContactsContract.Data.CONTENT_URI, null,
+//                        ContactsContract.Data.CONTACT_ID + "=" + contact_id + " AND " + ContactsContract.Data.MIMETYPE + "=" + ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE,
+//                        null, null);
+//                if (group != null && group.moveToFirst()) {
+//                    do {
+//                        try {
+//                            JSONObject groupRow = new JSONObject();
+//                            groupRow.put("group", group.getString(group.getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID)));
+//                            groups.put(groupRow);
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    } while (group.moveToNext());
+//                }
+//                if (group != null && ! group.isClosed()) group.close();
 
                 ContentValues contactInfo = new ContentValues();
                 contactInfo.put(Provider.Contacts_Data.TIMESTAMP, System.currentTimeMillis());
