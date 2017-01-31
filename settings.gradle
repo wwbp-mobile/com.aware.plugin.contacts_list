@@ -1,1 +1,1 @@
-include ':app'
+include ':com.aware.plugin.contacts_list', ':com.aware.plugin.contacts_list.lib'
