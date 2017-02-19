@@ -84,8 +84,9 @@ public class Provider extends ContentProvider {
 
     //Helper variables for ContentProvider - don't change me
     private static UriMatcher sUriMatcher;
-    private static DatabaseHelper dbHelper;
+    private DatabaseHelper dbHelper;
     private static SQLiteDatabase database;
+
     private void initialiseDatabase() {
         if (dbHelper == null)
             dbHelper = new DatabaseHelper(getContext(), DATABASE_NAME, null, DATABASE_VERSION, DATABASE_TABLES, TABLES_FIELDS);
@@ -117,8 +118,6 @@ public class Provider extends ContentProvider {
         contactsHash.put(Contacts_Data.EMAILS, Contacts_Data.EMAILS);
         contactsHash.put(Contacts_Data.GROUPS, Contacts_Data.GROUPS);
         contactsHash.put(Contacts_Data.SYNC_DATE, Contacts_Data.SYNC_DATE);
-
-        initialiseDatabase();
 
         return true;
     }
