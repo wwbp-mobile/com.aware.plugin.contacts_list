@@ -39,9 +39,6 @@ public class Plugin extends Aware_Plugin {
         DATABASE_TABLES = Provider.DATABASE_TABLES;
         TABLES_FIELDS = Provider.TABLES_FIELDS;
         CONTEXT_URIS = new Uri[]{ Provider.Contacts_Data.CONTENT_URI }; //this syncs Contacts_Data to server
-
-        //Activate plugin -- do this ALWAYS as the last thing (this will restart your own plugin and apply the settings)
-        Aware.startPlugin(this, "com.aware.plugin.contacts_list");
     }
 
     //This function gets called every 5 minutes by AWARE to make sure this plugin is still running.
