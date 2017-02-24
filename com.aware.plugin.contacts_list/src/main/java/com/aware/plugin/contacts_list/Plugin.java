@@ -2,13 +2,10 @@ package com.aware.plugin.contacts_list;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.support.v4.content.ContextCompat;
 
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
-import com.aware.ui.PermissionsHandler;
 import com.aware.utils.Aware_Plugin;
 import com.aware.utils.Scheduler;
 
@@ -17,6 +14,8 @@ import org.json.JSONException;
 public class Plugin extends Aware_Plugin {
 
     public static final String SCHEDULER_PLUGIN_CONTACTS = "SCHEDULER_PLUGIN_CONTACTS";
+
+    private Intent aware;
 
     @Override
     public void onCreate() {
@@ -40,8 +39,8 @@ public class Plugin extends Aware_Plugin {
         TABLES_FIELDS = Provider.TABLES_FIELDS;
         CONTEXT_URIS = new Uri[]{ Provider.Contacts_Data.CONTENT_URI }; //this syncs Contacts_Data to server
 
-        //Boot AWARE
-        Aware.startAWARE(this);
+        aware = new Intent(this, Aware.class);
+        startService(aware);
     }
 
     //This function gets called every 5 minutes by AWARE to make sure this plugin is still running.
@@ -87,8 +86,7 @@ public class Plugin extends Aware_Plugin {
         Scheduler.removeSchedule(this, SCHEDULER_PLUGIN_CONTACTS);
         Aware.setSetting(this, Settings.STATUS_PLUGIN_CONTACTS, false);
 
-        //Stop AWARE
-        Aware.stopAWARE(this);
+        stopService(aware);
     }
 }
 
