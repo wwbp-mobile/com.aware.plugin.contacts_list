@@ -44,7 +44,7 @@ public class Contacts_Service extends IntentService {
                 String contact_id = contacts.getString(contacts.getColumnIndex(ContactsContract.Contacts._ID));
                 String contact_name = contacts.getString(contacts.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-                if (contact_name.length() == 0) continue;
+                if (contact_name == null || contact_name.length() == 0) continue;
                 
                 JSONArray phone_numbers = new JSONArray();
                 if (contacts.getInt(contacts.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) != 0) {
