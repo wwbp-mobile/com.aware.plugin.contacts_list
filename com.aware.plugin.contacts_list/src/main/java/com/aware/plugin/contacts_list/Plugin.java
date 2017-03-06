@@ -7,6 +7,7 @@ import android.net.Uri;
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
 import com.aware.utils.Aware_Plugin;
+import com.aware.utils.PluginsManager;
 import com.aware.utils.Scheduler;
 
 import org.json.JSONException;
@@ -14,8 +15,6 @@ import org.json.JSONException;
 public class Plugin extends Aware_Plugin {
 
     public static final String SCHEDULER_PLUGIN_CONTACTS = "SCHEDULER_PLUGIN_CONTACTS";
-
-    private Intent aware;
 
     @Override
     public void onCreate() {
@@ -38,9 +37,6 @@ public class Plugin extends Aware_Plugin {
         DATABASE_TABLES = Provider.DATABASE_TABLES;
         TABLES_FIELDS = Provider.TABLES_FIELDS;
         CONTEXT_URIS = new Uri[]{ Provider.Contacts_Data.CONTENT_URI }; //this syncs Contacts_Data to server
-
-        aware = new Intent(this, Aware.class);
-        startService(aware);
     }
 
     //This function gets called every 5 minutes by AWARE to make sure this plugin is still running.
@@ -49,6 +45,9 @@ public class Plugin extends Aware_Plugin {
         super.onStartCommand(intent, flags, startId);
 
         if (PERMISSIONS_OK) {
+
+            PluginsManager.enablePlugin(this, "com.aware.plugin.contacts_list");
+
             //Check if the user has toggled the debug messages
             DEBUG = Aware.getSetting(this, Aware_Preferences.DEBUG_FLAG).equals("true");
 
@@ -74,6 +73,7 @@ public class Plugin extends Aware_Plugin {
                 e.printStackTrace();
             }
 
+            Aware.startAWARE(this);
         }
 
         return START_STICKY;
@@ -86,7 +86,7 @@ public class Plugin extends Aware_Plugin {
         Scheduler.removeSchedule(this, SCHEDULER_PLUGIN_CONTACTS);
         Aware.setSetting(this, Settings.STATUS_PLUGIN_CONTACTS, false);
 
-        stopService(aware);
+        Aware.stopAWARE(this);
     }
 }
 
