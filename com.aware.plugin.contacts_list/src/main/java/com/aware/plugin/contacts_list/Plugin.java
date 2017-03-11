@@ -46,8 +46,6 @@ public class Plugin extends Aware_Plugin {
 
         if (PERMISSIONS_OK) {
 
-            PluginsManager.enablePlugin(this, "com.aware.plugin.contacts_list");
-
             //Check if the user has toggled the debug messages
             DEBUG = Aware.getSetting(this, Aware_Preferences.DEBUG_FLAG).equals("true");
 
@@ -73,6 +71,7 @@ public class Plugin extends Aware_Plugin {
                 e.printStackTrace();
             }
 
+            Aware.startPlugin(this, "com.aware.plugin.contacts_list");
             Aware.startAWARE(this);
         }
 
