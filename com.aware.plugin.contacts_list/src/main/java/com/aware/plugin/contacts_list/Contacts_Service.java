@@ -30,7 +30,7 @@ import java.util.Calendar;
 public class Contacts_Service extends IntentService {
 
     public Contacts_Service() {
-        super(Plugin.TAG);
+        super(Aware.TAG);
     }
 
     @Override
@@ -110,8 +110,8 @@ public class Contacts_Service extends IntentService {
 
                 getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
 
-                if (Plugin.DEBUG)
-                    Log.d(Plugin.TAG, "Contact stored: " + contactInfo.toString());
+                if (Aware.DEBUG)
+                    Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
 
             } while (contacts.moveToNext());
         }
