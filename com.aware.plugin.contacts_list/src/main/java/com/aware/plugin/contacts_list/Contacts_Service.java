@@ -30,7 +30,7 @@ import java.util.Calendar;
 public class Contacts_Service extends IntentService {
 
     public Contacts_Service() {
-        super(Plugin.TAG);
+        super(Aware.TAG);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class Contacts_Service extends IntentService {
                 String contact_id = contacts.getString(contacts.getColumnIndex(ContactsContract.Contacts._ID));
                 String contact_name = contacts.getString(contacts.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
-                if (contact_name.length() == 0) continue;
+                if (contact_name == null || contact_name.length() == 0) continue;
                 
                 JSONArray phone_numbers = new JSONArray();
                 if (contacts.getInt(contacts.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) != 0) {
@@ -110,8 +110,8 @@ public class Contacts_Service extends IntentService {
 
                 getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
 
-                if (Plugin.DEBUG)
-                    Log.d(Plugin.TAG, "Contact stored: " + contactInfo.toString());
+                if (Aware.DEBUG)
+                    Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
 
             } while (contacts.moveToNext());
         }

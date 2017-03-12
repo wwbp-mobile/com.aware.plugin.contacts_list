@@ -84,26 +84,18 @@ public class Provider extends ContentProvider {
 
     //Helper variables for ContentProvider - don't change me
     private static UriMatcher sUriMatcher;
-    private DatabaseHelper databaseHelper;
+    private DatabaseHelper dbHelper;
     private static SQLiteDatabase database;
+
+    private void initialiseDatabase() {
+        if (dbHelper == null)
+            dbHelper = new DatabaseHelper(getContext(), DATABASE_NAME, null, DATABASE_VERSION, DATABASE_TABLES, TABLES_FIELDS);
+        if (database == null)
+            database = dbHelper.getWritableDatabase();
+    }
 
     //For each table, create a hashmap needed for database queries
     private static HashMap<String, String> contactsHash;
-
-    /**
-     * Initialise database: create the database file, update if needed, etc. DO NOT CHANGE ME
-     *
-     * @return
-     */
-    private boolean initializeDB() {
-        if (databaseHelper == null) {
-            databaseHelper = new DatabaseHelper(getContext(), DATABASE_NAME, null, DATABASE_VERSION, DATABASE_TABLES, TABLES_FIELDS);
-        }
-        if (database == null || !database.isOpen()) {
-            database = databaseHelper.getWritableDatabase();
-        }
-        return (database != null && databaseHelper != null);
-    }
 
     @Override
     public boolean onCreate() {
@@ -133,10 +125,7 @@ public class Provider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        if (!initializeDB()) {
-            Log.w("", "Database unavailable...");
-            return null;
-        }
+        initialiseDatabase();
 
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         switch (sUriMatcher.match(uri)) {
@@ -183,37 +172,39 @@ public class Provider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues new_values) {
-        if (!initializeDB()) {
-            Log.w("", "Database unavailable to insert...");
-            return null;
-        }
+        initialiseDatabase();
 
         ContentValues values = (new_values != null) ? new ContentValues(new_values) : new ContentValues();
         long _id;
+
+        database.beginTransaction();
 
         switch (sUriMatcher.match(uri)) {
 
             //Add each table DIR case
             case CONTACTS_DIR:
-                _id = database.insert(DATABASE_TABLES[0], Contacts_Data.DEVICE_ID, values);
+                _id = database.insertWithOnConflict(DATABASE_TABLES[0], Contacts_Data.DEVICE_ID, values, SQLiteDatabase.CONFLICT_IGNORE);
+                database.setTransactionSuccessful();
+                database.endTransaction();
                 if (_id > 0) {
                     Uri dataUri = ContentUris.withAppendedId(Contacts_Data.CONTENT_URI, _id);
                     getContext().getContentResolver().notifyChange(dataUri, null);
                     return dataUri;
                 }
+                database.endTransaction();
                 throw new SQLException("Failed to insert row into " + uri);
 
             default:
+                database.endTransaction();
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        if (!initializeDB()) {
-            Log.w("", "Database unavailable to delete...");
-            return 0;
-        }
+        initialiseDatabase();
+
+        database.beginTransaction();
 
         int count;
         switch (sUriMatcher.match(uri)) {
@@ -224,18 +215,21 @@ public class Provider extends ContentProvider {
                 break;
 
             default:
+                database.endTransaction();
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
+        database.setTransactionSuccessful();
+        database.endTransaction();
+
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        if (!initializeDB()) {
-            Log.w("", "Database unavailable to update...");
-            return 0;
-        }
+        initialiseDatabase();
+
+        database.beginTransaction();
 
         int count;
         switch (sUriMatcher.match(uri)) {
@@ -246,9 +240,13 @@ public class Provider extends ContentProvider {
                 break;
 
             default:
-                database.close();
+                database.endTransaction();
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
+
+        database.setTransactionSuccessful();
+        database.endTransaction();
+
         getContext().getContentResolver().notifyChange(uri, null);
         return count;
     }
