@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AWARE: Contacts List</string>
+    <string name="plugin_contacts_list">Plugin: Contacts List</string>
 </resources>

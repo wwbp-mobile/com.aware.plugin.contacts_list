@@ -1,8 +1,10 @@
 package com.aware.plugin.contacts_list;
 
 import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
@@ -70,6 +72,17 @@ public class Plugin extends Aware_Plugin {
                 e.printStackTrace();
             }
 
+            if (!Aware.isSyncEnabled(this, Provider.getAuthority(this)) && Aware.isStudy(this) && getApplicationContext().getPackageName().equalsIgnoreCase("com.aware.phone") || getApplicationContext().getResources().getBoolean(R.bool.standalone)) {
+                ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), Provider.getAuthority(this), 1);
+                ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Provider.getAuthority(this), true);
+                ContentResolver.addPeriodicSync(
+                        Aware.getAWAREAccount(this),
+                        Provider.getAuthority(this),
+                        Bundle.EMPTY,
+                        Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
+                );
+            }
+
             Aware.startAWARE(this);
         }
 
@@ -79,6 +92,15 @@ public class Plugin extends Aware_Plugin {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        if (Aware.isStudy(this) && (getApplicationContext().getPackageName().equalsIgnoreCase("com.aware.phone") || getApplicationContext().getResources().getBoolean(R.bool.standalone))) {
+            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Provider.getAuthority(this), false);
+            ContentResolver.removePeriodicSync(
+                    Aware.getAWAREAccount(this),
+                    Provider.getAuthority(this),
+                    Bundle.EMPTY
+            );
+        }
 
         Scheduler.removeSchedule(this, SCHEDULER_PLUGIN_CONTACTS);
         Aware.setSetting(this, Settings.STATUS_PLUGIN_CONTACTS, false);
