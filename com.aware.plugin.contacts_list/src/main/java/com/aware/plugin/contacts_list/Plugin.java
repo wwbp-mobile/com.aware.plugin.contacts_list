@@ -3,7 +3,6 @@ package com.aware.plugin.contacts_list;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import com.aware.Aware;
@@ -33,11 +32,6 @@ public class Plugin extends Aware_Plugin {
 
         //Add permissions you need (Support for Android M). By default, AWARE asks access to the #Manifest.permission.WRITE_EXTERNAL_STORAGE
         REQUIRED_PERMISSIONS.add(Manifest.permission.READ_CONTACTS);
-
-        //To sync data to the server, you'll need to set this variables from your ContentProvider
-        DATABASE_TABLES = Provider.DATABASE_TABLES;
-        TABLES_FIELDS = Provider.TABLES_FIELDS;
-        CONTEXT_URIS = new Uri[]{ Provider.Contacts_Data.CONTENT_URI }; //this syncs Contacts_Data to server
     }
 
     //This function gets called every 5 minutes by AWARE to make sure this plugin is still running.
