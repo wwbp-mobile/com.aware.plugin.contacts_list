@@ -19,7 +19,6 @@
 
         <service
             android:name="com.aware.plugin.contacts_list.Contacts_Service"
-            android:exported="true"
             android:label="AWARE: Contacts List Sync" />
 
         <activity

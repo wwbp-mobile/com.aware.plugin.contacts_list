@@ -1,7 +1,6 @@
 package com.aware.plugin.contacts_list;
 
 import android.app.IntentService;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,8 +14,6 @@ import com.aware.utils.Encrypter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Calendar;
 
 /**
  * Created by serrislew on 12/31/16.
@@ -36,6 +33,8 @@ public class Contacts_Service extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
+        if (intent == null) return;
+
         long sync_date = System.currentTimeMillis();
 
         Cursor contacts = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
@@ -45,7 +44,7 @@ public class Contacts_Service extends IntentService {
                 String contact_name = contacts.getString(contacts.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
                 if (contact_name == null || contact_name.length() == 0) continue;
-                
+
                 JSONArray phone_numbers = new JSONArray();
                 if (contacts.getInt(contacts.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) != 0) {
                     Cursor phone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + contact_id, null, null);
@@ -94,10 +93,10 @@ public class Contacts_Service extends IntentService {
                             groups.put(groupRow);
                         } catch (JSONException e) {
                             e.printStackTrace();
-                        } 
+                        }
                     } while (group.moveToNext());
                 }
-                if (group != null && ! group.isClosed()) group.close();
+                if (group != null && !group.isClosed()) group.close();
 
                 ContentValues contactInfo = new ContentValues();
                 contactInfo.put(Provider.Contacts_Data.TIMESTAMP, System.currentTimeMillis());

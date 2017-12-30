@@ -58,7 +58,7 @@ public class Plugin extends Aware_Plugin {
                 if (contacts_sync==null || contacts_sync.getInterval() != Long.parseLong(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_CONTACTS)))
                 {
                     contacts_sync = new Scheduler.Schedule(SCHEDULER_PLUGIN_CONTACTS);
-                    contacts_sync.setInterval(Long.parseLong(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_CONTACTS))*60*24);//*60 mins/hrs * 24 hrs/day
+                    contacts_sync.setInterval(Integer.parseInt(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_CONTACTS))*60*24);//*60 mins/hrs * 24 hrs/day
                     contacts_sync.setActionType(Scheduler.ACTION_TYPE_SERVICE);
                     contacts_sync.setActionClass(getPackageName() + "/" + Contacts_Service.class.getName());
                     Scheduler.saveSchedule(this, contacts_sync);
