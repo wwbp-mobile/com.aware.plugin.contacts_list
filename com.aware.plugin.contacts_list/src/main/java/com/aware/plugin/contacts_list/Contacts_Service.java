@@ -1,10 +1,12 @@
 package com.aware.plugin.contacts_list;
 
-import android.app.IntentService;
+import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.IBinder;
 import android.provider.ContactsContract;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.aware.Aware;
@@ -24,16 +26,15 @@ import org.json.JSONObject;
  * - added contact hashes that match with phone numbers used in calls and messages logs
  */
 
-public class Contacts_Service extends IntentService {
+public class Contacts_Service extends Service {
 
-    public Contacts_Service() {
-        super(Aware.TAG);
+    @Override
+    public void onCreate() {
+        super.onCreate();
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-
-        if (intent == null) return;
+    public int onStartCommand(Intent intent, int flags, int startId) {
 
         long sync_date = System.currentTimeMillis();
 
@@ -107,7 +108,11 @@ public class Contacts_Service extends IntentService {
                 contactInfo.put(Provider.Contacts_Data.GROUPS, groups.toString());
                 contactInfo.put(Provider.Contacts_Data.SYNC_DATE, sync_date);
 
-                getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
+                try {
+                    getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                }
 
                 if (Aware.DEBUG)
                     Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
@@ -115,5 +120,15 @@ public class Contacts_Service extends IntentService {
             } while (contacts.moveToNext());
         }
         if (contacts != null && !contacts.isClosed()) contacts.close();
+
+        stopSelf();
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 }
