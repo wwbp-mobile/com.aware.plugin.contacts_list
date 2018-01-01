@@ -1,11 +1,9 @@
 package com.aware.plugin.contacts_list;
 
 import android.app.IntentService;
-import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.IBinder;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -37,7 +35,7 @@ public class Contacts_Service extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         long sync_date = System.currentTimeMillis();
 
-        Cursor contacts = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        Cursor contacts = getApplicationContext().getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
         if (contacts != null && contacts.moveToFirst()) {
             do {
                 String contact_id = contacts.getString(contacts.getColumnIndex(ContactsContract.Contacts._ID));
@@ -109,12 +107,10 @@ public class Contacts_Service extends IntentService {
 
                 try {
                     getApplicationContext().getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
+                    if (Aware.DEBUG) Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                 }
-
-                if (Aware.DEBUG) Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
-
             } while (contacts.moveToNext());
         }
         if (contacts != null && !contacts.isClosed()) contacts.close();

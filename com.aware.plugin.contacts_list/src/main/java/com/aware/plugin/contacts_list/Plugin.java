@@ -20,7 +20,7 @@ public class Plugin extends Aware_Plugin {
     public void onCreate() {
         super.onCreate();
 
-        AUTHORITY = Provider.getAuthority(this);
+        AUTHORITY = Provider.getAuthority(getApplicationContext());
 
         TAG = "AWARE::"+getResources().getString(R.string.app_name);
 
