@@ -1,5 +1,6 @@
 package com.aware.plugin.contacts_list;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -26,16 +27,14 @@ import org.json.JSONObject;
  * - added contact hashes that match with phone numbers used in calls and messages logs
  */
 
-public class Contacts_Service extends Service {
+public class Contacts_Service extends IntentService {
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    public Contacts_Service() {
+        super("Contacts_Sync");
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
+    protected void onHandleIntent(@Nullable Intent intent) {
         long sync_date = System.currentTimeMillis();
 
         Cursor contacts = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
@@ -109,26 +108,15 @@ public class Contacts_Service extends Service {
                 contactInfo.put(Provider.Contacts_Data.SYNC_DATE, sync_date);
 
                 try {
-                    getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
+                    getApplicationContext().getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                 }
 
-                if (Aware.DEBUG)
-                    Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
+                if (Aware.DEBUG) Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
 
             } while (contacts.moveToNext());
         }
         if (contacts != null && !contacts.isClosed()) contacts.close();
-
-        stopSelf();
-
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 }
