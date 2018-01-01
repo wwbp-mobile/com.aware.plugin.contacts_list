@@ -25,7 +25,7 @@ import java.util.HashMap;
  */
 public class Provider extends ContentProvider {
 
-    public static String AUTHORITY = "com.aware.plugin.contacts_list.provider.contacts"; //change to package.provider.your_plugin_name
+    public static String AUTHORITY = "com.aware.plugin.cmu.sup.provider.contacts"; //change to package.provider.your_plugin_name
     public static final int DATABASE_VERSION = 7; //increase this if you make changes to the database structure, i.e., rename columns, etc.
 
     public static final String DATABASE_NAME = "plugin_contacts.db"; //the database filename, use plugin_xxx for plugins.
