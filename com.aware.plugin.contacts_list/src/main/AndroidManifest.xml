@@ -16,10 +16,6 @@
             android:exported="true"
             android:label="AWARE: Contacts List" />
 
-        <service
-            android:name="com.aware.plugin.contacts_list.Contacts_Service"
-            android:label="AWARE: Contacts List Sync" />
-
         <activity
             android:name="com.aware.plugin.contacts_list.Settings"
             android:exported="true" />
