@@ -86,7 +86,7 @@ public class Plugin extends Aware_Plugin {
 
             if (!Aware.isSyncEnabled(this, Provider.getAuthority(this)) && Aware.isStudy(this)) {
                 ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), Provider.getAuthority(this), 1);
-                ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Provider.getAuthority(this), true);
+                //ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Provider.getAuthority(this), true);
                 ContentResolver.addPeriodicSync(
                         Aware.getAWAREAccount(this),
                         Provider.getAuthority(this),
@@ -198,7 +198,7 @@ public class Plugin extends Aware_Plugin {
         super.onDestroy();
 
         if (Aware.isStudy(getApplicationContext()) && Aware.isSyncEnabled(getApplicationContext(), Provider.getAuthority(getApplicationContext()))) {
-            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Provider.getAuthority(this), false);
+            //ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Provider.getAuthority(this), false);
             ContentResolver.removePeriodicSync(
                     Aware.getAWAREAccount(this),
                     Provider.getAuthority(this),
