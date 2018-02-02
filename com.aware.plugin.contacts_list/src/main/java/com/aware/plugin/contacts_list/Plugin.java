@@ -22,9 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Plugin extends Aware_Plugin {
-
     public static final String SCHEDULER_PLUGIN_CONTACTS = "SCHEDULER_PLUGIN_CONTACTS";
-
     public static final String ACTION_REFRESH_CONTACTS = "ACTION_REFRESH_CONTACTS";
 
     @Override
@@ -73,7 +71,7 @@ public class Plugin extends Aware_Plugin {
                 if (contacts_sync==null || contacts_sync.getInterval() != Long.parseLong(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_CONTACTS)))
                 {
                     contacts_sync = new Scheduler.Schedule(SCHEDULER_PLUGIN_CONTACTS);
-                    contacts_sync.setInterval(Integer.parseInt(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_CONTACTS))*60*24);//*60 mins/hrs * 24 hrs/day
+                    contacts_sync.setInterval(Integer.parseInt(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_CONTACTS))*60*24);
                     contacts_sync.setActionType(Scheduler.ACTION_TYPE_SERVICE);
                     contacts_sync.setActionIntentAction(ACTION_REFRESH_CONTACTS);
                     contacts_sync.setActionClass(getPackageName() + "/" + Plugin.class.getName());
@@ -84,14 +82,14 @@ public class Plugin extends Aware_Plugin {
                 e.printStackTrace();
             }
 
-            if (!Aware.isSyncEnabled(this, Provider.getAuthority(this)) && Aware.isStudy(this)) {
-                ContentResolver.setIsSyncable(Aware.getAWAREAccount(this), Provider.getAuthority(this), 1);
-                //ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Provider.getAuthority(this), true);
+            if (!Aware.isSyncEnabled(getApplicationContext(), Provider.getAuthority(getApplicationContext())) && Aware.isStudy(getApplicationContext())) {
+                ContentResolver.setIsSyncable(Aware.getAWAREAccount(getApplicationContext()), Provider.getAuthority(getApplicationContext()), 1);
+                ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(getApplicationContext()), Provider.getAuthority(getApplicationContext()), true);
                 ContentResolver.addPeriodicSync(
-                        Aware.getAWAREAccount(this),
-                        Provider.getAuthority(this),
+                        Aware.getAWAREAccount(getApplicationContext()),
+                        Provider.getAuthority(getApplicationContext()),
                         Bundle.EMPTY,
-                        Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
+                        Long.parseLong(Aware.getSetting(getApplicationContext(), Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
                 );
             }
 
@@ -198,10 +196,10 @@ public class Plugin extends Aware_Plugin {
         super.onDestroy();
 
         if (Aware.isStudy(getApplicationContext()) && Aware.isSyncEnabled(getApplicationContext(), Provider.getAuthority(getApplicationContext()))) {
-            //ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(this), Provider.getAuthority(this), false);
+            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(getApplicationContext()), Provider.getAuthority(getApplicationContext()), false);
             ContentResolver.removePeriodicSync(
-                    Aware.getAWAREAccount(this),
-                    Provider.getAuthority(this),
+                    Aware.getAWAREAccount(getApplicationContext()),
+                    Provider.getAuthority(getApplicationContext()),
                     Bundle.EMPTY
             );
         }

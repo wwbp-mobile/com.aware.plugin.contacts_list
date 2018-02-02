@@ -25,8 +25,8 @@ import java.util.HashMap;
  */
 public class Provider extends ContentProvider {
 
-    public static String AUTHORITY = "com.aware.plugin.cmu.sup.provider.contacts"; //change to package.provider.your_plugin_name
-    public static final int DATABASE_VERSION = 7; //increase this if you make changes to the database structure, i.e., rename columns, etc.
+    public static String AUTHORITY = "com.aware.plugin.contacts_list.provider.contacts"; //change to package.provider.your_plugin_name
+    public static final int DATABASE_VERSION = 8; //increase this if you make changes to the database structure, i.e., rename columns, etc.
 
     public static final String DATABASE_NAME = "plugin_contacts.db"; //the database filename, use plugin_xxx for plugins.
 
@@ -110,7 +110,7 @@ public class Provider extends ContentProvider {
     @Override
     public boolean onCreate() {
         //This is a hack to allow providers to be reusable in any application/plugin by making the authority dynamic using the package name of the parent app
-        AUTHORITY = getContext().getPackageName()+".provider.contacts";
+        AUTHORITY = getAuthority(getContext());
 
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -198,7 +198,7 @@ public class Provider extends ContentProvider {
                 database.endTransaction();
                 if (_id > 0) {
                     Uri dataUri = ContentUris.withAppendedId(Contacts_Data.CONTENT_URI, _id);
-                    getContext().getContentResolver().notifyChange(dataUri, null);
+                    getContext().getContentResolver().notifyChange(dataUri, null, false);
                     return dataUri;
                 }
                 database.endTransaction();
@@ -231,7 +231,7 @@ public class Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
 
@@ -257,7 +257,7 @@ public class Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
 }
