@@ -5,11 +5,13 @@ android {
     buildToolsVersion build_tools
 
     defaultConfig {
-//        applicationId "com.aware.plugin.contacts_list" //EDIT ME
+//        applicationId "com.aware.plugin.contacts_list"
         minSdkVersion minimum_sdk
         targetSdkVersion target_sdk
         versionCode version_code
         versionName version_readable
+
+        resValue "string", "provider_contacts_list", applicationId + ".provider.contacts"
     }
 
     signingConfigs {
@@ -26,6 +28,14 @@ android {
 
     lintOptions {
         abortOnError false
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs += '../com.aware.plugin.contacts_list/src/main/java'
+            res.srcDirs += '../com.aware.plugin.contacts_list/src/main/res'
+            manifest.srcFile '../com.aware.plugin.contacts_list/src/main/AndroidManifest.xml'
+        }
     }
 }
 
@@ -70,9 +80,5 @@ configurations.all {
 }
 
 dependencies {
-    implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:$mqtt_libs"
-    implementation "com.koushikdutta.ion:ion:$ion_libs"
-    implementation "com.android.support:appcompat-v7:$support_libs"
-    implementation "com.android.support:gridlayout-v7:$support_libs"
     api "com.github.denzilferreira:aware-client:$aware_libs"
 }

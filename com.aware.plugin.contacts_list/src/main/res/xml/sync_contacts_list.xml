@@ -2,7 +2,7 @@
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
     android:accountType="com.awareframework"
     android:allowParallelSyncs="true"
-    android:contentAuthority="com.aware.plugin.contacts_list.provider.contacts"
+    android:contentAuthority="@string/provider_contacts_list"
     android:isAlwaysSyncable="true"
     android:supportsUploading="true"
-    android:userVisible="false" />
+    android:userVisible="true" />
