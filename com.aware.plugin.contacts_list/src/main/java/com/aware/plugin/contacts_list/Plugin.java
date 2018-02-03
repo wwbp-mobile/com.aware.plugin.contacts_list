@@ -3,9 +3,9 @@ package com.aware.plugin.contacts_list;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDiskIOException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -51,9 +51,8 @@ public class Plugin extends Aware_Plugin {
         super.onStartCommand(intent, flags, startId);
 
         if (PERMISSIONS_OK) {
-
             if (intent != null && intent.getAction() != null && intent.getAction().equalsIgnoreCase(ACTION_REFRESH_CONTACTS)) {
-                new AsyncContacts().execute(getApplicationContext());
+                new AsyncContacts().execute();
             }
 
             //Check if the user has toggled the debug messages
@@ -99,15 +98,13 @@ public class Plugin extends Aware_Plugin {
         return START_STICKY;
     }
 
-    private static class AsyncContacts extends AsyncTask<Context, Void, Void> {
+    private class AsyncContacts extends AsyncTask<Void, Void, Void> {
         @Override
-        protected Void doInBackground(Context... contexts) {
-
-            Context context = contexts[0];
+        protected Void doInBackground(Void... params) {
 
             long sync_date = System.currentTimeMillis();
 
-            Cursor contacts = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+            Cursor contacts = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
             if (contacts != null && contacts.moveToFirst()) {
                 do {
                     String contact_id = contacts.getString(contacts.getColumnIndex(ContactsContract.Contacts._ID));
@@ -117,14 +114,14 @@ public class Plugin extends Aware_Plugin {
 
                     JSONArray phone_numbers = new JSONArray();
                     if (contacts.getInt(contacts.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) != 0) {
-                        Cursor phone = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + contact_id, null, null);
+                        Cursor phone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + contact_id, null, null);
                         if (phone != null && phone.moveToFirst()) {
                             do {
                                 try {
                                     JSONObject phoneRow = new JSONObject();
                                     phoneRow.put("type", phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE)));
                                     phoneRow.put("number", phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
-                                    phoneRow.put("hash", Encrypter.hashPhone(context, phoneRow.getString("number")));
+                                    phoneRow.put("hash", Encrypter.hashPhone(getApplicationContext(), phoneRow.getString("number")));
                                     phone_numbers.put(phoneRow);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -135,7 +132,7 @@ public class Plugin extends Aware_Plugin {
                     }
 
                     JSONArray emails = new JSONArray();
-                    Cursor email = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=" + contact_id, null, null);
+                    Cursor email = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=" + contact_id, null, null);
                     if (email != null && email.moveToFirst()) {
                         do {
                             try {
@@ -151,7 +148,7 @@ public class Plugin extends Aware_Plugin {
                     if (email != null && !email.isClosed()) email.close();
 
                     JSONArray groups = new JSONArray();
-                    Cursor group = context.getContentResolver().query(
+                    Cursor group = getContentResolver().query(
                             ContactsContract.Data.CONTENT_URI, null,
                             ContactsContract.Data.CONTACT_ID + "=" + contact_id + " AND " + ContactsContract.Data.MIMETYPE + "='" + ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE + "'",
                             null, null);
@@ -170,7 +167,7 @@ public class Plugin extends Aware_Plugin {
 
                     ContentValues contactInfo = new ContentValues();
                     contactInfo.put(Provider.Contacts_Data.TIMESTAMP, System.currentTimeMillis());
-                    contactInfo.put(Provider.Contacts_Data.DEVICE_ID, Aware.getSetting(context, Aware_Preferences.DEVICE_ID));
+                    contactInfo.put(Provider.Contacts_Data.DEVICE_ID, Aware.getSetting(getApplicationContext(), Aware_Preferences.DEVICE_ID));
                     contactInfo.put(Provider.Contacts_Data.NAME, contact_name);
                     contactInfo.put(Provider.Contacts_Data.PHONE_NUMBERS, phone_numbers.toString());
                     contactInfo.put(Provider.Contacts_Data.EMAILS, emails.toString());
@@ -178,9 +175,9 @@ public class Plugin extends Aware_Plugin {
                     contactInfo.put(Provider.Contacts_Data.SYNC_DATE, sync_date);
 
                     try {
-                        context.getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
+                        getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
                         if (Aware.DEBUG) Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
-                    } catch (IllegalArgumentException e) {
+                    } catch (IllegalArgumentException | SQLiteDiskIOException e) {
                         e.printStackTrace();
                     }
                 } while (contacts.moveToNext());
