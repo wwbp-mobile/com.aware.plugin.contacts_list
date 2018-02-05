@@ -23,10 +23,11 @@
 
         <provider
             android:name="com.aware.plugin.contacts_list.Provider"
-            android:label="@string/plugin_contacts_list"
             android:authorities="${applicationId}.provider.contacts"
             android:exported="true"
+            android:label="@string/plugin_contacts_list"
             android:readPermission="com.aware.READ_CONTEXT_DATA"
+            android:syncable="true"
             android:writePermission="com.aware.WRITE_CONTEXT_DATA" />
 
         <service
@@ -35,7 +36,9 @@
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
-            <meta-data android:name="android.content.SyncAdapter" android:resource="@xml/sync_contacts_list" />
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/sync_contacts_list" />
         </service>
 
     </application>

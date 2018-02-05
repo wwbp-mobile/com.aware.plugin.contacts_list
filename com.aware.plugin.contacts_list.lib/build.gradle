@@ -5,13 +5,12 @@ android {
     buildToolsVersion build_tools
 
     defaultConfig {
-//        applicationId "com.aware.plugin.contacts_list"
         minSdkVersion minimum_sdk
         targetSdkVersion target_sdk
         versionCode version_code
         versionName version_readable
 
-        resValue "string", "provider_contacts_list", applicationId + ".provider.contacts"
+        resValue "string", "provider_contacts_list", "com.aware.plugin.contacts_list.provider.contacts"
     }
 
     signingConfigs {

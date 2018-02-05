@@ -1,9 +1,11 @@
 package com.aware.plugin.contacts_list;
 
 import android.Manifest;
+import android.accounts.Account;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SyncRequest;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDiskIOException;
 import android.os.AsyncTask;
@@ -82,14 +84,17 @@ public class Plugin extends Aware_Plugin {
             }
 
             if (!Aware.isSyncEnabled(getApplicationContext(), Provider.getAuthority(getApplicationContext())) && Aware.isStudy(getApplicationContext())) {
-                ContentResolver.setIsSyncable(Aware.getAWAREAccount(getApplicationContext()), Provider.getAuthority(getApplicationContext()), 1);
-                ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(getApplicationContext()), Provider.getAuthority(getApplicationContext()), true);
-                ContentResolver.addPeriodicSync(
-                        Aware.getAWAREAccount(getApplicationContext()),
-                        Provider.getAuthority(getApplicationContext()),
-                        Bundle.EMPTY,
-                        Long.parseLong(Aware.getSetting(getApplicationContext(), Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60
-                );
+                Account aware_account = Aware.getAWAREAccount(getApplicationContext());
+                String authority = Provider.getAuthority(getApplicationContext());
+                long frequency = Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60;
+
+                ContentResolver.setIsSyncable(aware_account, authority, 1);
+                ContentResolver.setSyncAutomatically(aware_account, authority, true);
+                SyncRequest request = new SyncRequest.Builder()
+                        .syncPeriodic(frequency, frequency/3)
+                        .setSyncAdapter(aware_account, authority)
+                        .setExtras(new Bundle()).build();
+                ContentResolver.requestSync(request);
             }
 
             Aware.startAWARE(this);
@@ -192,7 +197,7 @@ public class Plugin extends Aware_Plugin {
     public void onDestroy() {
         super.onDestroy();
 
-        if (Aware.isStudy(getApplicationContext()) && Aware.isSyncEnabled(getApplicationContext(), Provider.getAuthority(getApplicationContext()))) {
+        if (Aware.isSyncEnabled(getApplicationContext(), Provider.getAuthority(getApplicationContext()))) {
             ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(getApplicationContext()), Provider.getAuthority(getApplicationContext()), false);
             ContentResolver.removePeriodicSync(
                     Aware.getAWAREAccount(getApplicationContext()),
