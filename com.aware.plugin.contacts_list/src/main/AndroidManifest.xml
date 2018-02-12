@@ -40,6 +40,7 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/sync_contacts_list" />
         </service>
+        <service android:name="com.aware.plugin.contacts_list.AsyncContacts" />
 
     </application>
 </manifest>
