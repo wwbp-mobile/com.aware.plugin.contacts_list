@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SyncRequest;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDiskIOException;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -32,7 +31,7 @@ public class Plugin extends Aware_Plugin {
     public void onCreate() {
         super.onCreate();
 
-        AUTHORITY = Provider.getAuthority(getApplicationContext());
+        AUTHORITY = Provider.getAuthority(this);
 
         TAG = "AWARE::"+getResources().getString(R.string.app_name);
 
@@ -84,9 +83,9 @@ public class Plugin extends Aware_Plugin {
                 e.printStackTrace();
             }
 
-            if (!Aware.isSyncEnabled(getApplicationContext(), Provider.getAuthority(getApplicationContext())) && Aware.isStudy(getApplicationContext())) {
-                Account aware_account = Aware.getAWAREAccount(getApplicationContext());
-                String authority = Provider.getAuthority(getApplicationContext());
+            if (!Aware.isSyncEnabled(getApplicationContext(), Provider.getAuthority(this)) && Aware.isStudy(this)) {
+                Account aware_account = Aware.getAWAREAccount(this);
+                String authority = Provider.getAuthority(this);
                 long frequency = Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60;
 
                 ContentResolver.setIsSyncable(aware_account, authority, 1);
@@ -110,7 +109,7 @@ public class Plugin extends Aware_Plugin {
 
             long sync_date = System.currentTimeMillis();
 
-            Cursor contacts = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+            Cursor contacts = getApplicationContext().getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
             if (contacts != null && contacts.moveToFirst()) {
                 do {
                     String contact_id = contacts.getString(contacts.getColumnIndex(ContactsContract.Contacts._ID));
@@ -138,7 +137,7 @@ public class Plugin extends Aware_Plugin {
                     }
 
                     JSONArray emails = new JSONArray();
-                    Cursor email = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=" + contact_id, null, null);
+                    Cursor email = getApplicationContext().getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=" + contact_id, null, null);
                     if (email != null && email.moveToFirst()) {
                         do {
                             try {
@@ -154,7 +153,7 @@ public class Plugin extends Aware_Plugin {
                     if (email != null && !email.isClosed()) email.close();
 
                     JSONArray groups = new JSONArray();
-                    Cursor group = getContentResolver().query(
+                    Cursor group = getApplicationContext().getContentResolver().query(
                             ContactsContract.Data.CONTENT_URI, null,
                             ContactsContract.Data.CONTACT_ID + "=" + contact_id + " AND " + ContactsContract.Data.MIMETYPE + "='" + ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE + "'",
                             null, null);
@@ -181,10 +180,7 @@ public class Plugin extends Aware_Plugin {
                     contactInfo.put(Provider.Contacts_Data.SYNC_DATE, sync_date);
 
                     try {
-                        //getApplicationContext().getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
-                        Uri uri = Uri.parse("content://" + AUTHORITY + "/" + Provider.DATABASE_TABLES[0]);
-                        getApplicationContext().getContentResolver().insert(uri, contactInfo);
-
+                        getApplicationContext().getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
                         if (Aware.DEBUG) Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
                     } catch (IllegalArgumentException | SQLiteDiskIOException e) {
                         e.printStackTrace();
@@ -192,7 +188,6 @@ public class Plugin extends Aware_Plugin {
                 } while (contacts.moveToNext());
             }
             if (contacts != null && !contacts.isClosed()) contacts.close();
-
             return null;
         }
     }
