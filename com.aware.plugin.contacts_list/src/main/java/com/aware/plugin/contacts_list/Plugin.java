@@ -180,7 +180,7 @@ public class Plugin extends Aware_Plugin {
                     contactInfo.put(Provider.Contacts_Data.SYNC_DATE, sync_date);
 
                     try {
-                        getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
+                        getApplicationContext().getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
                         if (Aware.DEBUG) Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
                     } catch (IllegalArgumentException | SQLiteDiskIOException e) {
                         e.printStackTrace();
@@ -197,7 +197,7 @@ public class Plugin extends Aware_Plugin {
     public void onDestroy() {
         super.onDestroy();
 
-        if (Aware.isSyncEnabled(getApplicationContext(), Provider.getAuthority(getApplicationContext()))) {
+        if (Aware.isSyncEnabled(getApplicationContext(), Provider.getAuthority(getApplicationContext())) && Aware.isStudy(getApplicationContext())) {
             ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(getApplicationContext()), Provider.getAuthority(getApplicationContext()), false);
             ContentResolver.removePeriodicSync(
                     Aware.getAWAREAccount(getApplicationContext()),

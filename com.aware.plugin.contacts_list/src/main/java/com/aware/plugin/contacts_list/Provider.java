@@ -167,13 +167,11 @@ public class Provider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         switch (sUriMatcher.match(uri)) {
-
             //Add each table indexes DIR and ITEM
             case CONTACTS_DIR:
                 return Contacts_Data.CONTENT_TYPE;
             case CONTACTS_ITEM:
                 return Contacts_Data.CONTENT_ITEM_TYPE;
-
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
