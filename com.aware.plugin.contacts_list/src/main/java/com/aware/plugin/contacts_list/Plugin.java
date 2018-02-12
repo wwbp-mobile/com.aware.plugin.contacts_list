@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SyncRequest;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDiskIOException;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -180,7 +181,10 @@ public class Plugin extends Aware_Plugin {
                     contactInfo.put(Provider.Contacts_Data.SYNC_DATE, sync_date);
 
                     try {
-                        getApplicationContext().getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
+                        //getApplicationContext().getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
+                        Uri uri = Uri.parse("content://" + AUTHORITY + "/" + Provider.DATABASE_TABLES[0]);
+                        getApplicationContext().getContentResolver().insert(uri, contactInfo);
+
                         if (Aware.DEBUG) Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
                     } catch (IllegalArgumentException | SQLiteDiskIOException e) {
                         e.printStackTrace();

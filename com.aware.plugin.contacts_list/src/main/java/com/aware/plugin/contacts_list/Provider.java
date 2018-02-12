@@ -54,7 +54,7 @@ public class Provider extends ContentProvider {
      * In this example, we are adding example columns
      */
     public static final class Contacts_Data implements AWAREColumns {
-        public static final Uri CONTENT_URI = Uri.parse("content://" + Provider.AUTHORITY + "/" + DB_TBL_CONTACTS);
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + DB_TBL_CONTACTS);
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.aware.plugin.contacts_list.provider.contacts"; //modify me
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.aware.plugin.contacts_list.provider.contacts"; //modify me
 
