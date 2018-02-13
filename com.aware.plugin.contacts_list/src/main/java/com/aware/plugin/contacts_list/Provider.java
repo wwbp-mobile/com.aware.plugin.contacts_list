@@ -104,6 +104,7 @@ public class Provider extends ContentProvider {
      */
     public static String getAuthority(Context context) {
         AUTHORITY = context.getPackageName() + ".provider.contacts_list";
+        Log.d("AUTHORITY", "getAuthority: " + AUTHORITY);
         return AUTHORITY;
     }
 
@@ -111,6 +112,7 @@ public class Provider extends ContentProvider {
     public boolean onCreate() {
         //This is a hack to allow providers to be reusable in any application/plugin by making the authority dynamic using the package name of the parent app
         AUTHORITY = getContext().getPackageName()+".provider.contacts_list";
+        Log.d("AUTHORITY", "onCreate: " + AUTHORITY);
 
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -179,7 +181,7 @@ public class Provider extends ContentProvider {
 
     @Nullable
     @Override
-    public Uri insert(Uri uri, ContentValues new_values) {
+    public synchronized Uri insert(Uri uri, ContentValues new_values) {
         initialiseDatabase();
 
         ContentValues values = (new_values != null) ? new ContentValues(new_values) : new ContentValues();
@@ -209,7 +211,7 @@ public class Provider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public synchronized int delete(Uri uri, String selection, String[] selectionArgs) {
         initialiseDatabase();
 
         database.beginTransaction();
@@ -234,7 +236,7 @@ public class Provider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    public synchronized int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         initialiseDatabase();
 
         database.beginTransaction();
