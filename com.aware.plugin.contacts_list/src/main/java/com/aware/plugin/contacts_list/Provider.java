@@ -61,8 +61,10 @@ public class Provider extends ContentProvider {
         public static String SYNC_DATE = "sync_date";
     }
 
-    //Define each database table fields
-    private static final String DB_TBL_FIELDS =
+    /**
+     * Share the fields with AWARE so we can replicate the table schema on the server
+     */
+    public static final String[] TABLES_FIELDS = {
             Contacts_Data._ID + " integer primary key autoincrement," +
                     Contacts_Data.TIMESTAMP + " real default 0," +
                     Contacts_Data.DEVICE_ID + " text default ''," +
@@ -70,13 +72,7 @@ public class Provider extends ContentProvider {
                     Contacts_Data.PHONE_NUMBERS + " text default ''," +
                     Contacts_Data.EMAILS + " text default ''," +
                     Contacts_Data.GROUPS + " text default ''," +
-                    Contacts_Data.SYNC_DATE + " real default 0";
-
-    /**
-     * Share the fields with AWARE so we can replicate the table schema on the server
-     */
-    public static final String[] TABLES_FIELDS = {
-            DB_TBL_FIELDS
+                    Contacts_Data.SYNC_DATE + " real default 0"
     };
 
     //Helper variables for ContentProvider - don't change me
@@ -180,7 +176,6 @@ public class Provider extends ContentProvider {
         initialiseDatabase();
 
         ContentValues values = (new_values != null) ? new ContentValues(new_values) : new ContentValues();
-        long _id;
 
         database.beginTransaction();
 
@@ -188,7 +183,7 @@ public class Provider extends ContentProvider {
 
             //Add each table DIR case
             case CONTACTS_DIR:
-                _id = database.insertWithOnConflict(DATABASE_TABLES[0], Contacts_Data.DEVICE_ID, values, SQLiteDatabase.CONFLICT_IGNORE);
+                long _id = database.insertWithOnConflict(DATABASE_TABLES[0], Contacts_Data.DEVICE_ID, values, SQLiteDatabase.CONFLICT_IGNORE);
                 database.setTransactionSuccessful();
                 database.endTransaction();
                 if (_id > 0) {
