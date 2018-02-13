@@ -30,16 +30,13 @@ public class Provider extends ContentProvider {
 
     public static final String DATABASE_NAME = "plugin_contacts.db"; //the database filename, use plugin_xxx for plugins.
 
-    //Add here your database table names, as many as you need
-    public static final String DB_TBL_CONTACTS = "plugin_contacts";
-
     //For each table, add two indexes: DIR and ITEM. The index needs to always increment. Next one is 3, and so on.
     private static final int CONTACTS_DIR = 1;
     private static final int CONTACTS_ITEM = 2;
 
     //Put tables names in this array so AWARE knows what you have on the database
     public static final String[] DATABASE_TABLES = {
-            DB_TBL_CONTACTS
+            "plugin_contacts"
     };
 
     //These are columns that we need to sync data, don't change this!
@@ -54,9 +51,10 @@ public class Provider extends ContentProvider {
      * In this example, we are adding example columns
      */
     public static final class Contacts_Data implements AWAREColumns {
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + DB_TBL_CONTACTS);
-        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.aware.plugin.contacts_list.provider.contacts_list"; //modify me
-        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.aware.plugin.contacts_list.provider.contacts_list"; //modify me
+        private Contacts_Data(){}
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/plugin_contacts");
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.com.aware.plugin.contacts"; //modify me
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.com.aware.plugin.contacts"; //modify me
 
         public static String NAME = "name";
         public static String PHONE_NUMBERS = "phone_numbers";
@@ -104,7 +102,6 @@ public class Provider extends ContentProvider {
      */
     public static String getAuthority(Context context) {
         AUTHORITY = context.getPackageName() + ".provider.contacts_list";
-        Log.d("AUTHORITY", "getAuthority: " + AUTHORITY);
         return AUTHORITY;
     }
 
@@ -112,7 +109,6 @@ public class Provider extends ContentProvider {
     public boolean onCreate() {
         //This is a hack to allow providers to be reusable in any application/plugin by making the authority dynamic using the package name of the parent app
         AUTHORITY = getContext().getPackageName()+".provider.contacts_list";
-        Log.d("AUTHORITY", "onCreate: " + AUTHORITY);
 
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
