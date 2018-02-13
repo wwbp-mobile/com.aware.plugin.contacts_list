@@ -80,7 +80,7 @@ public class Provider extends ContentProvider {
     };
 
     //Helper variables for ContentProvider - don't change me
-    private static UriMatcher sUriMatcher;
+    private static UriMatcher sUriMatcher = null;
     private DatabaseHelper dbHelper;
     private static SQLiteDatabase database;
 
@@ -92,7 +92,7 @@ public class Provider extends ContentProvider {
     }
 
     //For each table, create a hashmap needed for database queries
-    private static HashMap<String, String> contactsHash;
+    private static HashMap<String, String> contactsHash = null;
 
     /**
      * Returns the provider authority that is dynamic
