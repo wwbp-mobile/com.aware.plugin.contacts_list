@@ -104,9 +104,7 @@ public class AsyncContacts extends IntentService {
                 contactInfo.put(Provider.Contacts_Data.SYNC_DATE, sync_date);
 
                 try {
-                    Log.d("INSERT URI: ", Provider.Contacts_Data.CONTENT_URI.toString());
                     getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
-
                     if (Aware.DEBUG) Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
                 } catch (IllegalArgumentException | SQLiteDiskIOException e) {
                     e.printStackTrace();

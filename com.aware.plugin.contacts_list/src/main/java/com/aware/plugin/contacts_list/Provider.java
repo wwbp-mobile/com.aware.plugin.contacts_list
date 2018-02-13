@@ -39,23 +39,21 @@ public class Provider extends ContentProvider {
             "plugin_contacts"
     };
 
-    //These are columns that we need to sync data, don't change this!
-    public interface AWAREColumns extends BaseColumns {
-        String _ID = "_id";
-        String TIMESTAMP = "timestamp";
-        String DEVICE_ID = "device_id";
-    }
-
     /**
      * Create one of these per database table
      * In this example, we are adding example columns
      */
-    public static final class Contacts_Data implements AWAREColumns {
-        private Contacts_Data(){}
+    public static final class Contacts_Data implements BaseColumns {
+        private Contacts_Data() {
+        }
+
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/plugin_contacts");
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.com.aware.plugin.contacts"; //modify me
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.com.aware.plugin.contacts"; //modify me
 
+        public static String _ID = "_id";
+        public static String TIMESTAMP = "timestamp";
+        public static String DEVICE_ID = "device_id";
         public static String NAME = "name";
         public static String PHONE_NUMBERS = "phone_numbers";
         public static String EMAILS = "emails";
@@ -66,13 +64,13 @@ public class Provider extends ContentProvider {
     //Define each database table fields
     private static final String DB_TBL_FIELDS =
             Contacts_Data._ID + " integer primary key autoincrement," +
-            Contacts_Data.TIMESTAMP + " real default 0," +
-            Contacts_Data.DEVICE_ID + " text default ''," +
-            Contacts_Data.NAME + " text default ''," +
-            Contacts_Data.PHONE_NUMBERS + " text default ''," +
-            Contacts_Data.EMAILS + " text default ''," +
-            Contacts_Data.GROUPS + " text default ''," +
-            Contacts_Data.SYNC_DATE + " real default 0";
+                    Contacts_Data.TIMESTAMP + " real default 0," +
+                    Contacts_Data.DEVICE_ID + " text default ''," +
+                    Contacts_Data.NAME + " text default ''," +
+                    Contacts_Data.PHONE_NUMBERS + " text default ''," +
+                    Contacts_Data.EMAILS + " text default ''," +
+                    Contacts_Data.GROUPS + " text default ''," +
+                    Contacts_Data.SYNC_DATE + " real default 0";
 
     /**
      * Share the fields with AWARE so we can replicate the table schema on the server
@@ -98,6 +96,7 @@ public class Provider extends ContentProvider {
 
     /**
      * Returns the provider authority that is dynamic
+     *
      * @return
      */
     public static String getAuthority(Context context) {
@@ -108,7 +107,7 @@ public class Provider extends ContentProvider {
     @Override
     public boolean onCreate() {
         //This is a hack to allow providers to be reusable in any application/plugin by making the authority dynamic using the package name of the parent app
-        AUTHORITY = getContext().getPackageName()+".provider.contacts_list";
+        AUTHORITY = getContext().getPackageName() + ".provider.contacts_list";
 
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
