@@ -11,7 +11,7 @@ android {
         versionCode version_code
         versionName version_readable
 
-        resValue "string", "provider_contacts_list", android.defaultConfig.applicationId + ".provider.contacts"
+        resValue "string", "provider_contacts_list", android.defaultConfig.applicationId + ".provider.contacts_list"
     }
 
     signingConfigs {

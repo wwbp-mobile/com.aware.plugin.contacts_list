@@ -1,7 +1,6 @@
 package com.aware.plugin.contacts_list;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -25,8 +24,9 @@ import java.util.HashMap;
  */
 public class Provider extends ContentProvider {
 
-    public static String AUTHORITY = "com.aware.plugin.contacts_list.provider.contacts"; //change to package.provider.your_plugin_name
-    public static final int DATABASE_VERSION = 8; //increase this if you make changes to the database structure, i.e., rename columns, etc.
+    public static String AUTHORITY = "com.aware.plugin.contacts_list.provider.contacts_list"; //change to package.provider.your_plugin_name
+
+    public static final int DATABASE_VERSION = 9; //increase this if you make changes to the database structure, i.e., rename columns, etc.
 
     public static final String DATABASE_NAME = "plugin_contacts.db"; //the database filename, use plugin_xxx for plugins.
 
@@ -55,8 +55,8 @@ public class Provider extends ContentProvider {
      */
     public static final class Contacts_Data implements AWAREColumns {
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + DB_TBL_CONTACTS);
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.aware.plugin.contacts_list.provider.contacts"; //modify me
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.aware.plugin.contacts_list.provider.contacts"; //modify me
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.aware.plugin.contacts_list.provider.contacts_list"; //modify me
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.aware.plugin.contacts_list.provider.contacts_list"; //modify me
 
         public static String NAME = "name";
         public static String PHONE_NUMBERS = "phone_numbers";
@@ -103,14 +103,14 @@ public class Provider extends ContentProvider {
      * @return
      */
     public static String getAuthority(Context context) {
-        AUTHORITY = context.getPackageName() + ".provider.contacts";
+        AUTHORITY = context.getPackageName() + ".provider.contacts_list";
         return AUTHORITY;
     }
 
     @Override
     public boolean onCreate() {
         //This is a hack to allow providers to be reusable in any application/plugin by making the authority dynamic using the package name of the parent app
-        AUTHORITY = getContext().getPackageName()+".provider.contacts";
+        AUTHORITY = getContext().getPackageName()+".provider.contacts_list";
 
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
