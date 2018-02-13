@@ -10,7 +10,7 @@ android {
         versionCode version_code
         versionName version_readable
 
-        resValue "string", "provider_contacts_list", "com.aware.plugin.contacts_list.provider.contacts"
+        resValue "string", "provider_contacts_list", "com.aware.plugin.contacts_list.provider.contacts_list"
     }
 
     signingConfigs {
