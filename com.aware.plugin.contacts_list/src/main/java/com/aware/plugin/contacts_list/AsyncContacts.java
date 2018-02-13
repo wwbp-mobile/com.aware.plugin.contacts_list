@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDiskIOException;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -104,8 +105,10 @@ public class AsyncContacts extends IntentService {
                 contactInfo.put(Provider.Contacts_Data.SYNC_DATE, sync_date);
 
                 try {
-                    getContentResolver().insert(Provider.Contacts_Data.CONTENT_URI, contactInfo);
-                    if (Aware.DEBUG) Log.d(Aware.TAG, "Contact stored: " + contactInfo.toString());
+
+                    Uri contentUri = Uri.parse("content://" + getApplicationContext().getPackageName() + ".provider.contacts_list/plugin_contacts");
+                    getContentResolver().insert(contentUri, contactInfo);
+                    if (Aware.DEBUG) Log.d(Aware.TAG, "URI: " + contentUri.toString() + " Contact stored: " + contactInfo.toString());
                 } catch (IllegalArgumentException | SQLiteDiskIOException e) {
                     e.printStackTrace();
                 }
