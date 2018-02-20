@@ -24,7 +24,7 @@ public class Plugin extends Aware_Plugin {
 
         AUTHORITY = Provider.getAuthority(this);
 
-        TAG = "AWARE::"+getResources().getString(R.string.app_name);
+        TAG = "AWARE::" + getResources().getString(R.string.app_name);
 
         //Any active plugin/sensor shares its overall context using broadcasts
         CONTEXT_PRODUCER = new ContextProducer() {
@@ -60,23 +60,21 @@ public class Plugin extends Aware_Plugin {
                 Aware.setSetting(this, Settings.FREQUENCY_PLUGIN_CONTACTS, 1);//set to one day
             }
 
-            try{
+            try {
                 Scheduler.Schedule contacts_sync = Scheduler.getSchedule(this, SCHEDULER_PLUGIN_CONTACTS);
-                if (contacts_sync==null || contacts_sync.getInterval() != Long.parseLong(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_CONTACTS)))
-                {
+                if (contacts_sync == null || contacts_sync.getInterval() != Long.parseLong(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_CONTACTS))) {
                     contacts_sync = new Scheduler.Schedule(SCHEDULER_PLUGIN_CONTACTS);
-                    contacts_sync.setInterval(Integer.parseInt(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_CONTACTS))*60*24);
+                    contacts_sync.setInterval(Integer.parseInt(Aware.getSetting(this, Settings.FREQUENCY_PLUGIN_CONTACTS)) * 60 * 24);
                     contacts_sync.setActionType(Scheduler.ACTION_TYPE_SERVICE);
                     contacts_sync.setActionIntentAction(ACTION_REFRESH_CONTACTS);
                     contacts_sync.setActionClass(getPackageName() + "/" + Plugin.class.getName());
                     Scheduler.saveSchedule(this, contacts_sync);
                 }
-            }
-            catch(JSONException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            if (!Aware.isSyncEnabled(getApplicationContext(), Provider.getAuthority(this)) && Aware.isStudy(this)) {
+            if (Aware.isStudy(this)) {
                 Account aware_account = Aware.getAWAREAccount(getApplicationContext());
                 String authority = Provider.getAuthority(getApplicationContext());
                 long frequency = Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60;
@@ -84,7 +82,7 @@ public class Plugin extends Aware_Plugin {
                 ContentResolver.setIsSyncable(aware_account, authority, 1);
                 ContentResolver.setSyncAutomatically(aware_account, authority, true);
                 SyncRequest request = new SyncRequest.Builder()
-                        .syncPeriodic(frequency, frequency/3)
+                        .syncPeriodic(frequency, frequency / 3)
                         .setSyncAdapter(aware_account, authority)
                         .setExtras(new Bundle()).build();
                 ContentResolver.requestSync(request);
@@ -103,14 +101,12 @@ public class Plugin extends Aware_Plugin {
         Aware.setSetting(this, Settings.STATUS_PLUGIN_CONTACTS, false);
         Scheduler.removeSchedule(this, SCHEDULER_PLUGIN_CONTACTS);
 
-        if (Aware.isSyncEnabled(this, Provider.getAuthority(this))) {
-            ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(getApplicationContext()), Provider.getAuthority(getApplicationContext()), false);
-            ContentResolver.removePeriodicSync(
-                    Aware.getAWAREAccount(this),
-                    Provider.getAuthority(this),
-                    Bundle.EMPTY
-            );
-        }
+        ContentResolver.setSyncAutomatically(Aware.getAWAREAccount(getApplicationContext()), Provider.getAuthority(getApplicationContext()), false);
+        ContentResolver.removePeriodicSync(
+                Aware.getAWAREAccount(this),
+                Provider.getAuthority(this),
+                Bundle.EMPTY
+        );
 
         Aware.stopAWARE(this);
     }
