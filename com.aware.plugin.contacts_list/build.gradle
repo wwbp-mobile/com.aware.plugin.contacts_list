@@ -1,15 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion compile_sdk
+    buildToolsVersion build_tools
 
     defaultConfig {
         applicationId "com.aware.plugin.contacts_list" //EDIT ME
-        minSdkVersion 11
-        targetSdkVersion 25
+        minSdkVersion minimum_sdk
+        targetSdkVersion target_sdk
         versionCode version_code
         versionName version_readable
+
+        resValue "string", "provider_contacts_list", android.defaultConfig.applicationId + ".provider.contacts_list"
     }
 
     signingConfigs {
@@ -48,8 +50,5 @@ configurations.all {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile "com.github.denzilferreira:aware-client:$aware_libs"
-    compile "com.android.support:appcompat-v7:$support_libs"
-    compile "com.android.support:gridlayout-v7:$support_libs"
+    api "com.github.denzilferreira:aware-client:$aware_libs"
 }

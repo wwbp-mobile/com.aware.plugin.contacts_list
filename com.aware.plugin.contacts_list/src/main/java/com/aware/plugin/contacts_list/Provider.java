@@ -1,9 +1,9 @@
 package com.aware.plugin.contacts_list;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -24,13 +24,11 @@ import java.util.HashMap;
  */
 public class Provider extends ContentProvider {
 
-    public static String AUTHORITY = "com.aware.plugin.contacts_list.provider.contacts"; //change to package.provider.your_plugin_name
-    public static final int DATABASE_VERSION = 7; //increase this if you make changes to the database structure, i.e., rename columns, etc.
+    public static String AUTHORITY = "com.aware.plugin.contacts_list.provider.contacts_list"; //change to package.provider.your_plugin_name
+
+    public static final int DATABASE_VERSION = 9; //increase this if you make changes to the database structure, i.e., rename columns, etc.
 
     public static final String DATABASE_NAME = "plugin_contacts.db"; //the database filename, use plugin_xxx for plugins.
-
-    //Add here your database table names, as many as you need
-    public static final String DB_TBL_CONTACTS = "plugin_contacts";
 
     //For each table, add two indexes: DIR and ITEM. The index needs to always increment. Next one is 3, and so on.
     private static final int CONTACTS_DIR = 1;
@@ -38,25 +36,24 @@ public class Provider extends ContentProvider {
 
     //Put tables names in this array so AWARE knows what you have on the database
     public static final String[] DATABASE_TABLES = {
-            DB_TBL_CONTACTS
+            "plugin_contacts"
     };
-
-    //These are columns that we need to sync data, don't change this!
-    public interface AWAREColumns extends BaseColumns {
-        String _ID = "_id";
-        String TIMESTAMP = "timestamp";
-        String DEVICE_ID = "device_id";
-    }
 
     /**
      * Create one of these per database table
      * In this example, we are adding example columns
      */
-    public static final class Contacts_Data implements AWAREColumns {
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + DB_TBL_CONTACTS);
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.com.aware.plugin.contacts_list.provider.contacts"; //modify me
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.com.aware.plugin.contacts_list.provider.contacts"; //modify me
+    public static final class Contacts_Data implements BaseColumns {
+        private Contacts_Data() {
+        }
 
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/plugin_contacts");
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.com.aware.plugin.contacts"; //modify me
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.com.aware.plugin.contacts"; //modify me
+
+        public static String _ID = "_id";
+        public static String TIMESTAMP = "timestamp";
+        public static String DEVICE_ID = "device_id";
         public static String NAME = "name";
         public static String PHONE_NUMBERS = "phone_numbers";
         public static String EMAILS = "emails";
@@ -64,26 +61,22 @@ public class Provider extends ContentProvider {
         public static String SYNC_DATE = "sync_date";
     }
 
-    //Define each database table fields
-    private static final String DB_TBL_FIELDS =
-            Contacts_Data._ID + " integer primary key autoincrement," +
-            Contacts_Data.TIMESTAMP + " real default 0," +
-            Contacts_Data.DEVICE_ID + " text default ''," +
-            Contacts_Data.NAME + " text default ''," +
-            Contacts_Data.PHONE_NUMBERS + " text default ''," +
-            Contacts_Data.EMAILS + " text default ''," +
-            Contacts_Data.GROUPS + " text default ''," +
-            Contacts_Data.SYNC_DATE + " real default 0";
-
     /**
      * Share the fields with AWARE so we can replicate the table schema on the server
      */
     public static final String[] TABLES_FIELDS = {
-            DB_TBL_FIELDS
+            Contacts_Data._ID + " integer primary key autoincrement," +
+                    Contacts_Data.TIMESTAMP + " real default 0," +
+                    Contacts_Data.DEVICE_ID + " text default ''," +
+                    Contacts_Data.NAME + " text default ''," +
+                    Contacts_Data.PHONE_NUMBERS + " text default ''," +
+                    Contacts_Data.EMAILS + " text default ''," +
+                    Contacts_Data.GROUPS + " text default ''," +
+                    Contacts_Data.SYNC_DATE + " real default 0"
     };
 
     //Helper variables for ContentProvider - don't change me
-    private static UriMatcher sUriMatcher;
+    private static UriMatcher sUriMatcher = null;
     private DatabaseHelper dbHelper;
     private static SQLiteDatabase database;
 
@@ -95,12 +88,22 @@ public class Provider extends ContentProvider {
     }
 
     //For each table, create a hashmap needed for database queries
-    private static HashMap<String, String> contactsHash;
+    private static HashMap<String, String> contactsHash = null;
+
+    /**
+     * Returns the provider authority that is dynamic
+     *
+     * @return
+     */
+    public static String getAuthority(Context context) {
+        AUTHORITY = context.getPackageName() + ".provider.contacts_list";
+        return AUTHORITY;
+    }
 
     @Override
     public boolean onCreate() {
         //This is a hack to allow providers to be reusable in any application/plugin by making the authority dynamic using the package name of the parent app
-        AUTHORITY = getContext().getPackageName() + ".provider.contacts"; //make sure xxx matches the first string in this class
+        AUTHORITY = getContext().getPackageName() + ".provider.contacts_list";
 
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -157,13 +160,11 @@ public class Provider extends ContentProvider {
     @Override
     public String getType(Uri uri) {
         switch (sUriMatcher.match(uri)) {
-
             //Add each table indexes DIR and ITEM
             case CONTACTS_DIR:
                 return Contacts_Data.CONTENT_TYPE;
             case CONTACTS_ITEM:
                 return Contacts_Data.CONTENT_ITEM_TYPE;
-
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -175,7 +176,6 @@ public class Provider extends ContentProvider {
         initialiseDatabase();
 
         ContentValues values = (new_values != null) ? new ContentValues(new_values) : new ContentValues();
-        long _id;
 
         database.beginTransaction();
 
@@ -183,12 +183,12 @@ public class Provider extends ContentProvider {
 
             //Add each table DIR case
             case CONTACTS_DIR:
-                _id = database.insertWithOnConflict(DATABASE_TABLES[0], Contacts_Data.DEVICE_ID, values, SQLiteDatabase.CONFLICT_IGNORE);
+                long _id = database.insertWithOnConflict(DATABASE_TABLES[0], Contacts_Data.DEVICE_ID, values, SQLiteDatabase.CONFLICT_IGNORE);
                 database.setTransactionSuccessful();
                 database.endTransaction();
                 if (_id > 0) {
                     Uri dataUri = ContentUris.withAppendedId(Contacts_Data.CONTENT_URI, _id);
-                    getContext().getContentResolver().notifyChange(dataUri, null);
+                    getContext().getContentResolver().notifyChange(dataUri, null, false);
                     return dataUri;
                 }
                 database.endTransaction();
@@ -221,7 +221,7 @@ public class Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
 
@@ -247,7 +247,7 @@ public class Provider extends ContentProvider {
         database.setTransactionSuccessful();
         database.endTransaction();
 
-        getContext().getContentResolver().notifyChange(uri, null);
+        getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
 }

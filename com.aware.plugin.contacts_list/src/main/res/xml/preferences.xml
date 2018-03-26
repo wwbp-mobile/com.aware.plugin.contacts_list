@@ -12,7 +12,7 @@
 
     <EditTextPreference
         android:key="frequency_plugin_contacts"
-        android:defaultValue=""
+        android:defaultValue="1"
         android:inputType="numberDecimal"
         android:persistent="true"
         android:summary="Every 1 day(s)"
