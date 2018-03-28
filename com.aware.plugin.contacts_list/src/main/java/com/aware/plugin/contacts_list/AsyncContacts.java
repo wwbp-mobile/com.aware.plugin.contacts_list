@@ -18,10 +18,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by dteixeir on 12/02/2018.
- */
-
 public class AsyncContacts extends IntentService {
     public AsyncContacts() {
         super("Plugin: Contacts List");
