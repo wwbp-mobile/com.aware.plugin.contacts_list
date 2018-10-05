@@ -87,8 +87,6 @@ public class Plugin extends Aware_Plugin {
                         .setExtras(new Bundle()).build();
                 ContentResolver.requestSync(request);
             }
-
-            Aware.startAWARE(this);
         }
 
         return START_STICKY;
@@ -107,8 +105,6 @@ public class Plugin extends Aware_Plugin {
                 Provider.getAuthority(this),
                 Bundle.EMPTY
         );
-
-        Aware.stopAWARE(this);
     }
 }
 
