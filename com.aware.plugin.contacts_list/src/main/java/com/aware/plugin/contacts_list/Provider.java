@@ -76,7 +76,7 @@ public class Provider extends ContentProvider {
     };
 
     //Helper variables for ContentProvider - don't change me
-    private static UriMatcher sUriMatcher = null;
+    private static UriMatcher sUriMatcher;
     private DatabaseHelper dbHelper;
     private static SQLiteDatabase database;
 
@@ -88,7 +88,7 @@ public class Provider extends ContentProvider {
     }
 
     //For each table, create a hashmap needed for database queries
-    private static HashMap<String, String> contactsHash = null;
+    private static HashMap<String, String> contactsHash;
 
     /**
      * Returns the provider authority that is dynamic
@@ -103,7 +103,7 @@ public class Provider extends ContentProvider {
     @Override
     public boolean onCreate() {
         //This is a hack to allow providers to be reusable in any application/plugin by making the authority dynamic using the package name of the parent app
-        AUTHORITY = getContext().getPackageName() + ".provider.contacts_list";
+        //AUTHORITY = getContext().getPackageName() + ".provider.contacts_list";
 
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -138,7 +138,6 @@ public class Provider extends ContentProvider {
                 qb.setTables(DATABASE_TABLES[0]);
                 qb.setProjectionMap(contactsHash); //the hashmap of the table
                 break;
-
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -173,6 +172,7 @@ public class Provider extends ContentProvider {
     @Nullable
     @Override
     public synchronized Uri insert(Uri uri, ContentValues new_values) {
+
         initialiseDatabase();
 
         ContentValues values = (new_values != null) ? new ContentValues(new_values) : new ContentValues();
@@ -184,11 +184,12 @@ public class Provider extends ContentProvider {
             //Add each table DIR case
             case CONTACTS_DIR:
                 long _id = database.insertWithOnConflict(DATABASE_TABLES[0], Contacts_Data.DEVICE_ID, values, SQLiteDatabase.CONFLICT_IGNORE);
-                database.setTransactionSuccessful();
-                database.endTransaction();
+
                 if (_id > 0) {
                     Uri dataUri = ContentUris.withAppendedId(Contacts_Data.CONTENT_URI, _id);
                     getContext().getContentResolver().notifyChange(dataUri, null, false);
+                    database.setTransactionSuccessful();
+                    database.endTransaction();
                     return dataUri;
                 }
                 database.endTransaction();

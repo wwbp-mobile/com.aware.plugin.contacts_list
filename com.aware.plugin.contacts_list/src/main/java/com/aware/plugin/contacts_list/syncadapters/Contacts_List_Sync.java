@@ -26,7 +26,7 @@ public class Contacts_List_Sync extends Service {
                 sSyncAdapter.init(
                         Provider.DATABASE_TABLES, Provider.TABLES_FIELDS,
                         new Uri[]{
-                                Uri.parse("content://" + getApplicationContext().getPackageName() + ".provider.contacts_list/plugin_contacts")
+                                Provider.Contacts_Data.CONTENT_URI
                         }
                 );
             }

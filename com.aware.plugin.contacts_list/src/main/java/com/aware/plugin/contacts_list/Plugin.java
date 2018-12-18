@@ -3,16 +3,24 @@ package com.aware.plugin.contacts_list;
 import android.Manifest;
 import android.accounts.Account;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SyncRequest;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDiskIOException;
 import android.os.Bundle;
 
+import android.provider.ContactsContract;
+import android.util.Log;
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
 import com.aware.utils.Aware_Plugin;
+import com.aware.utils.Encrypter;
 import com.aware.utils.Scheduler;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Plugin extends Aware_Plugin {
     public static final String SCHEDULER_PLUGIN_CONTACTS = "SCHEDULER_PLUGIN_CONTACTS";
@@ -24,7 +32,7 @@ public class Plugin extends Aware_Plugin {
 
         AUTHORITY = Provider.getAuthority(this);
 
-        TAG = "AWARE::" + getResources().getString(R.string.app_name);
+        TAG = "AWARE::Contacts List";
 
         //Any active plugin/sensor shares its overall context using broadcasts
         CONTEXT_PRODUCER = new ContextProducer() {
@@ -44,6 +52,7 @@ public class Plugin extends Aware_Plugin {
         super.onStartCommand(intent, flags, startId);
 
         if (PERMISSIONS_OK) {
+
             if (intent != null && intent.getAction() != null && intent.getAction().equalsIgnoreCase(ACTION_REFRESH_CONTACTS)) {
                 Intent contactsSync = new Intent(this, AsyncContacts.class);
                 startService(contactsSync);
@@ -76,14 +85,13 @@ public class Plugin extends Aware_Plugin {
 
             if (Aware.isStudy(this)) {
                 Account aware_account = Aware.getAWAREAccount(getApplicationContext());
-                String authority = Provider.getAuthority(getApplicationContext());
                 long frequency = Long.parseLong(Aware.getSetting(this, Aware_Preferences.FREQUENCY_WEBSERVICE)) * 60;
 
-                ContentResolver.setIsSyncable(aware_account, authority, 1);
-                ContentResolver.setSyncAutomatically(aware_account, authority, true);
+                ContentResolver.setIsSyncable(aware_account, Provider.getAuthority(getApplicationContext()), 1);
+                ContentResolver.setSyncAutomatically(aware_account, Provider.getAuthority(getApplicationContext()), true);
                 SyncRequest request = new SyncRequest.Builder()
                         .syncPeriodic(frequency, frequency / 3)
-                        .setSyncAdapter(aware_account, authority)
+                        .setSyncAdapter(aware_account, Provider.getAuthority(getApplicationContext()))
                         .setExtras(new Bundle()).build();
                 ContentResolver.requestSync(request);
             }

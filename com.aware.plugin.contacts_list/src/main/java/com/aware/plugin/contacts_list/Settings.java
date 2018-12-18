@@ -1,6 +1,7 @@
 package com.aware.plugin.contacts_list;
 
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -10,9 +11,9 @@ import android.preference.PreferenceManager;
 
 import com.aware.Aware;
 
-public class Settings extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class Settings extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
-    //Plugin settings in XML @xml/preferences
+    //Plugin settings in XML @xml/preferences_contacts_list
     public static final String STATUS_PLUGIN_CONTACTS = "status_plugin_contacts";
 
     //Frequency of Plugin
@@ -25,7 +26,7 @@ public class Settings extends PreferenceActivity implements SharedPreferences.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences);
+        addPreferencesFromResource(R.xml.preferences_contacts_list);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
     }

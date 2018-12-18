@@ -26,7 +26,7 @@ public class AsyncContacts extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
-        Provider.getAuthority(getApplicationContext());
+        Log.d("AUTHORITY", Provider.getAuthority(getApplicationContext()));
 
         long sync_date = System.currentTimeMillis();
 
@@ -102,7 +102,8 @@ public class AsyncContacts extends IntentService {
 
                 try {
 
-                    Uri contentUri = Uri.parse("content://" + getApplicationContext().getPackageName() + ".provider.contacts_list/plugin_contacts");
+                    //Uri contentUri = Uri.parse("content://" + getApplicationContext().getPackageName() + ".provider.contacts_list/plugin_contacts");
+                    Uri contentUri = Uri.parse("content://com.aware.plugin.contacts_list.provider.contacts_list/plugin_contacts");
                     getContentResolver().insert(contentUri, contactInfo);
                     if (Aware.DEBUG) Log.d(Aware.TAG, "URI: " + contentUri.toString() + " Contact stored: " + contactInfo.toString());
                 } catch (IllegalArgumentException | SQLiteDiskIOException e) {

@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.aware.plugin.contacts_list">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.aware.plugin.contacts_list">
 
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
 
     <application
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        tools:replace="android:icon, android:label">
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            tools:replace="android:icon, android:label">
 
         <service
-            android:name="com.aware.plugin.contacts_list.Plugin"
-            android:exported="true"
-            android:label="AWARE: Contacts List" />
+                android:name="com.aware.plugin.contacts_list.Plugin"
+                android:exported="true"
+                android:label="AWARE: Contacts List"/>
 
         <activity
-            android:name="com.aware.plugin.contacts_list.Settings"
-            android:exported="true" />
+                android:name="com.aware.plugin.contacts_list.Settings"
+                android:exported="true"/>
 
         <provider
-            android:name="com.aware.plugin.contacts_list.Provider"
-            android:authorities="${applicationId}.provider.contacts_list"
-            android:exported="true"
-            android:label="@string/plugin_contacts_list"
-            android:readPermission="com.aware.READ_CONTEXT_DATA"
-            android:syncable="true"
-            android:writePermission="com.aware.WRITE_CONTEXT_DATA" />
+                android:name="com.aware.plugin.contacts_list.Provider"
+                android:authorities="com.aware.plugin.contacts_list.provider.contacts_list"
+                android:exported="true"
+                android:label="@string/plugin_contacts_list"
+                android:readPermission="com.aware.READ_CONTEXT_DATA"
+                android:syncable="true"
+                android:writePermission="com.aware.WRITE_CONTEXT_DATA"/>
 
         <service
-            android:name="com.aware.plugin.contacts_list.syncadapters.Contacts_List_Sync"
-            android:exported="true">
+                android:name="com.aware.plugin.contacts_list.syncadapters.Contacts_List_Sync"
+                android:exported="true">
             <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
+                <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
             <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/sync_contacts_list" />
+                    android:name="android.content.SyncAdapter"
+                    android:resource="@xml/sync_contacts_list"/>
         </service>
-        <service android:name="com.aware.plugin.contacts_list.AsyncContacts" />
+        <service android:name=".AsyncContacts"/>
 
     </application>
 </manifest>
