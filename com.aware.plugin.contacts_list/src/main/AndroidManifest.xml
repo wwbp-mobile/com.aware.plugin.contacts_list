@@ -13,6 +13,7 @@
 
         <activity
             android:name="com.aware.plugin.contacts_list.Settings"
+            android:label="AWARE: Contacts"
             android:exported="true" />
 
         <provider

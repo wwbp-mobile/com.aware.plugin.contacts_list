@@ -43,24 +43,7 @@ android {
     }
 }
 
-if (System.getenv("storeFile") != null && System.getenv("storePassword") != null && System.getenv("keyAlias") != null && System.getenv("keyPassword") != null) {
-    android.signingConfigs.release.storeFile = file(System.getenv("storeFile"))
-    android.signingConfigs.release.storePassword = System.getenv("storePassword")
-    android.signingConfigs.release.keyAlias = System.getenv("keyAlias")
-    android.signingConfigs.release.keyPassword = System.getenv("keyPassword")
-} else {
-    println("No keystore defined. Unsigned!")
-    android.buildTypes.release.signingConfig = null
-}
-
-repositories {
-    maven { url "https://jitpack.io" } //AWARE development
-}
-
-configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}
-
 dependencies {
-    api "com.github.denzilferreira:aware-client:$aware_libs"
+    implementation "com.android.support:support-annotations:$support_libs"
+    api project(":aware-core")
 }

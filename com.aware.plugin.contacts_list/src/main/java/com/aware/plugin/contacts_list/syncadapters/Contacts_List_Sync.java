@@ -4,10 +4,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 
+import android.support.annotation.Nullable;
 import com.aware.plugin.contacts_list.Provider;
 import com.aware.syncadapters.AwareSyncAdapter;
+
 
 /**
  * Created by denzilferreira on 17/08/2017.

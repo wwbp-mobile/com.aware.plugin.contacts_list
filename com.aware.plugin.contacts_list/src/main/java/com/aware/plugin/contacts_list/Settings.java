@@ -10,8 +10,9 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
 import com.aware.Aware;
+import com.aware.ui.AppCompatPreferenceActivity;
 
-public class Settings extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+public class Settings extends AppCompatPreferenceActivity implements OnSharedPreferenceChangeListener {
 
     //Plugin settings in XML @xml/preferences_contacts_list
     public static final String STATUS_PLUGIN_CONTACTS = "status_plugin_contacts";
