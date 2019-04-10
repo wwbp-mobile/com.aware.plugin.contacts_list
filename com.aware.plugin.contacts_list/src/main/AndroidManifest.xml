@@ -18,7 +18,7 @@
 
         <provider
             android:name="com.aware.plugin.contacts_list.Provider"
-            android:authorities="com.aware.plugin.contacts_list.provider.contacts_list"
+            android:authorities="${applicationId}.provider.contacts_list"
             android:exported="true"
             android:label="@string/plugin_contacts_list"
             android:readPermission="com.aware.READ_CONTEXT_DATA"
