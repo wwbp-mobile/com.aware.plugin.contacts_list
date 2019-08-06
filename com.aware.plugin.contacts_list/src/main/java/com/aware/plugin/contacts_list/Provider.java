@@ -1,19 +1,13 @@
 package com.aware.plugin.contacts_list;
 
-import android.content.ContentProvider;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.UriMatcher;
+import android.content.*;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.support.annotation.Nullable;
 import android.util.Log;
-
 import com.aware.Aware;
 import com.aware.utils.DatabaseHelper;
 
@@ -125,7 +119,6 @@ public class Provider extends ContentProvider {
         return true;
     }
 
-    @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         initialiseDatabase();
@@ -155,7 +148,6 @@ public class Provider extends ContentProvider {
         }
     }
 
-    @Nullable
     @Override
     public String getType(Uri uri) {
         switch (sUriMatcher.match(uri)) {
@@ -169,7 +161,6 @@ public class Provider extends ContentProvider {
         }
     }
 
-    @Nullable
     @Override
     public synchronized Uri insert(Uri uri, ContentValues new_values) {
 

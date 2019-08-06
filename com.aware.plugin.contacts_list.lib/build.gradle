@@ -51,6 +51,6 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:support-annotations:$support_libs"
+    implementation "androidx.annotation:annotation:1.1.0"
     api project(":aware-core")
 }
