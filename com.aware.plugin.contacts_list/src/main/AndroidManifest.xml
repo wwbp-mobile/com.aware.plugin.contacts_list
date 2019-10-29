@@ -13,12 +13,12 @@
 
         <activity
             android:name="com.aware.plugin.contacts_list.Settings"
-            android:label="AWARE: Contacts"
-            android:exported="true" />
+            android:exported="true"
+            android:label="AWARE: Contacts" />
 
         <provider
             android:name="com.aware.plugin.contacts_list.Provider"
-            android:authorities="com.aware.phone.provider.contacts_list"
+            android:authorities="${applicationId}.provider.contacts_list"
             android:exported="true"
             android:label="@string/plugin_contacts_list"
             android:readPermission="com.aware.READ_CONTEXT_DATA"

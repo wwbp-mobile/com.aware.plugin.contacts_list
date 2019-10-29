@@ -98,17 +98,21 @@ public class AsyncContacts extends IntentService {
                 contactInfo.put(Provider.Contacts_Data.GROUPS, groups.toString());
                 contactInfo.put(Provider.Contacts_Data.SYNC_DATE, sync_date);
 
-                try {
-                    Uri contentUri = Uri.parse("content://com.aware.plugin.contacts_list.provider.contacts_list/plugin_contacts");
-                    getContentResolver().insert(contentUri, contactInfo);
-                    if (Aware.DEBUG)
-                        Log.d(Aware.TAG, "URI: " + contentUri.toString() + " Contact stored: " + contactInfo.toString());
-                } catch (IllegalArgumentException | SQLiteDiskIOException e) {
-                    Uri contentUri = Uri.parse("content://" + getApplicationContext().getPackageName() + ".provider.contacts_list/plugin_contacts");
-                    getContentResolver().insert(contentUri, contactInfo);
-                    if (Aware.DEBUG)
-                        Log.d(Aware.TAG, "URI: " + contentUri.toString() + " Contact stored: " + contactInfo.toString());
-                }
+                Provider.getAuthority(getApplicationContext());
+
+                getApplicationContext().getContentResolver().insert(Uri.parse(Provider.getAuthority(getApplicationContext())+ "/plugin_contacts"), contactInfo);
+
+//                try {
+//                    Uri contentUri = Uri.parse("content://com.aware.plugin.contacts_list.provider.contacts_list/plugin_contacts");
+//                    getContentResolver().insert(contentUri, contactInfo);
+//                    if (Aware.DEBUG)
+//                        Log.d(Aware.TAG, "URI: " + contentUri.toString() + " Contact stored: " + contactInfo.toString());
+//                } catch (IllegalArgumentException | SQLiteDiskIOException e) {
+//                    Uri contentUri = Uri.parse("content://" + getApplicationContext().getPackageName() + ".provider.contacts_list/plugin_contacts");
+//                    getContentResolver().insert(contentUri, contactInfo);
+//                    if (Aware.DEBUG)
+//                        Log.d(Aware.TAG, "URI: " + contentUri.toString() + " Contact stored: " + contactInfo.toString());
+//                }
             } while (contacts.moveToNext());
         }
         if (contacts != null && !contacts.isClosed()) contacts.close();

@@ -1,11 +1,15 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
 android {
     compileSdkVersion compile_sdk
     buildToolsVersion build_tools
 
     defaultConfig {
-        applicationId "com.aware.plugin.contacts_list" //EDIT ME
+        applicationId "com.aware.plugin.contacts_list"
         minSdkVersion minimum_sdk
         targetSdkVersion target_sdk
         versionCode version_code
@@ -41,9 +45,11 @@ android {
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/proguard/androidx-annotations.pro'
     }
+
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
-dependencies {
-    implementation "androidx.annotation:annotation:1.1.0"
-    api project(":aware-core")
-}
+apply from: '../dependencies.gradle'

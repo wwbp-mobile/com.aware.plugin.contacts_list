@@ -1,6 +1,10 @@
 package com.aware.plugin.contacts_list;
 
-import android.content.*;
+import android.content.ContentProvider;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,9 +24,9 @@ public class Provider extends ContentProvider {
 
     public static String AUTHORITY = "com.aware.plugin.contacts_list.provider.contacts_list"; //change to package.provider.your_plugin_name
 
-    public static final int DATABASE_VERSION = 9; //increase this if you make changes to the database structure, i.e., rename columns, etc.
+    public static final int DATABASE_VERSION = 10; //increase this if you make changes to the database structure, i.e., rename columns, etc.
 
-    public static final String DATABASE_NAME = "plugin_contacts.db"; //the database filename, use plugin_xxx for plugins.
+    public static final String DATABASE_NAME = "plugin_contacts_list.db"; //the database filename, use plugin_xxx for plugins.
 
     //For each table, add two indexes: DIR and ITEM. The index needs to always increment. Next one is 3, and so on.
     private static final int CONTACTS_DIR = 1;
@@ -30,7 +34,7 @@ public class Provider extends ContentProvider {
 
     //Put tables names in this array so AWARE knows what you have on the database
     public static final String[] DATABASE_TABLES = {
-            "plugin_contacts"
+            "plugin_contacts_list"
     };
 
     /**
@@ -38,12 +42,24 @@ public class Provider extends ContentProvider {
      * In this example, we are adding example columns
      */
     public static final class Contacts_Data implements BaseColumns {
+
+        private static String packageName;
+
         private Contacts_Data() {
         }
 
-        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/plugin_contacts");
-        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.com.aware.plugin.contacts"; //modify me
-        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.com.aware.plugin.contacts"; //modify me
+//        public static void setPackage(String root) {
+//            packageName = root + ".provider.contacts_list";
+//        }
+//
+//        public static String getPackage() {
+//            if (packageName.length() == 0)
+//            return packageName;
+//        }
+
+        public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/plugin_contacts_list");
+        public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.com.aware.plugin.contacts_list"; //modify me
+        public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.com.aware.plugin.contacts_list"; //modify me
 
         public static String _ID = "_id";
         public static String TIMESTAMP = "timestamp";
@@ -82,7 +98,7 @@ public class Provider extends ContentProvider {
     }
 
     //For each table, create a hashmap needed for database queries
-    private static HashMap<String, String> contactsHash;
+    private static HashMap<String, String> contactsHash = null;
 
     /**
      * Returns the provider authority that is dynamic
@@ -97,11 +113,10 @@ public class Provider extends ContentProvider {
     @Override
     public boolean onCreate() {
         //This is a hack to allow providers to be reusable in any application/plugin by making the authority dynamic using the package name of the parent app
-        //AUTHORITY = getContext().getPackageName() + ".provider.contacts_list";
+
+        AUTHORITY = getContext().getPackageName() + ".provider.contacts_list";
 
         sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-
-        //For each table, add indexes DIR and ITEM
         sUriMatcher.addURI(AUTHORITY, DATABASE_TABLES[0], CONTACTS_DIR);
         sUriMatcher.addURI(AUTHORITY, DATABASE_TABLES[0] + "/#", CONTACTS_ITEM);
 
@@ -175,17 +190,15 @@ public class Provider extends ContentProvider {
             //Add each table DIR case
             case CONTACTS_DIR:
                 long _id = database.insertWithOnConflict(DATABASE_TABLES[0], Contacts_Data.DEVICE_ID, values, SQLiteDatabase.CONFLICT_IGNORE);
-
+                database.setTransactionSuccessful();
+                database.endTransaction();
                 if (_id > 0) {
                     Uri dataUri = ContentUris.withAppendedId(Contacts_Data.CONTENT_URI, _id);
                     getContext().getContentResolver().notifyChange(dataUri, null, false);
-                    database.setTransactionSuccessful();
-                    database.endTransaction();
                     return dataUri;
                 }
                 database.endTransaction();
                 throw new SQLException("Failed to insert row into " + uri);
-
             default:
                 database.endTransaction();
                 throw new IllegalArgumentException("Unknown URI " + uri);
@@ -200,19 +213,15 @@ public class Provider extends ContentProvider {
 
         int count;
         switch (sUriMatcher.match(uri)) {
-
-            //Add each table DIR case
             case CONTACTS_DIR:
                 count = database.delete(DATABASE_TABLES[0], selection, selectionArgs);
                 break;
-
             default:
                 database.endTransaction();
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
         database.setTransactionSuccessful();
         database.endTransaction();
-
         getContext().getContentResolver().notifyChange(uri, null, false);
         return count;
     }
