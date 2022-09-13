@@ -7,10 +7,8 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SyncRequest;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.util.Log;
 
 import com.aware.Aware;
 import com.aware.Aware_Preferences;
@@ -64,8 +62,10 @@ public class Plugin extends Aware_Plugin {
                                     try {
                                         JSONObject phoneRow = new JSONObject();
                                         phoneRow.put("type", phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE)));
-                                        phoneRow.put("number", phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
-                                        phoneRow.put("hash", Encrypter.hashPhone(getApplicationContext(), phoneRow.getString("number")));
+                                        phoneRow.put("number",phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                                        phoneRow.put("hash",
+                                                Encrypter.hashAddress(getApplicationContext(),
+                                                        phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER))));
                                         phone_numbers.put(phoneRow);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
