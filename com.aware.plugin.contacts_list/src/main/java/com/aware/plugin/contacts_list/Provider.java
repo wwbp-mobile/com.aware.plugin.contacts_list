@@ -61,14 +61,14 @@ public class Provider extends ContentProvider {
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.com.aware.plugin.contacts_list"; //modify me
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/vnd.com.aware.plugin.contacts_list"; //modify me
 
-        public static String _ID = "_id";
-        public static String TIMESTAMP = "timestamp";
-        public static String DEVICE_ID = "device_id";
-        public static String NAME = "name";
-        public static String PHONE_NUMBERS = "phone_numbers";
-        public static String EMAILS = "emails";
-        public static String GROUPS = "groups";
-        public static String SYNC_DATE = "sync_date";
+        public static final String _ID = "_id";
+        public static final String TIMESTAMP = "timestamp";
+        public static final String DEVICE_ID = "device_id";
+        public static final String NAME = "name";
+        public static final String PHONE_NUMBERS = "phone_numbers";
+        public static final String EMAILS = "emails";
+        public static final String GROUPS = "groups";
+        public static final String SYNC_DATE = "sync_date";
     }
 
     /**

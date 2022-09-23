@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDiskIOException;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
@@ -45,7 +44,8 @@ public class AsyncContacts extends IntentService {
                                 JSONObject phoneRow = new JSONObject();
                                 phoneRow.put("type", phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE)));
                                 phoneRow.put("number", phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
-                                phoneRow.put("hash", Encrypter.hashPhone(getApplicationContext(), phoneRow.getString("number")));
+                                phoneRow.put("hash", Encrypter.hashAddress(getApplicationContext(),
+                                        phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER))));
                                 phone_numbers.put(phoneRow);
                             } catch (JSONException e) {
                                 e.printStackTrace();
