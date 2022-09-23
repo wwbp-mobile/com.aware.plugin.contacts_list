@@ -30,7 +30,7 @@ public class Plugin extends Aware_Plugin {
 
         AUTHORITY = Provider.getAuthority(this);
         TAG = "AWARE::Contacts List";
-        REQUIRED_PERMISSIONS.add(Manifest.permission.READ_CONTACTS);
+        //REQUIRED_PERMISSIONS.add(Manifest.permission.READ_CONTACTS);
     }
 
     //This function gets called every 5 minutes by AWARE to make sure this plugin is still running.
